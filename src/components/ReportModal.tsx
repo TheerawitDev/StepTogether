@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { HazardCategory, HazardReport, HazardSeverity, UserLocation } from '../types/hazard';
 import { speakText } from '../services/audioRadar';
 
@@ -105,21 +105,32 @@ export const ReportModal: React.FC<ReportModalProps> = ({
   const [extraNote, setExtraNote] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
+  // Hidden File Input Ref for native camera trigger
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleSelectPreset = (opt: PresetOption) => {
     setSelectedPreset(opt);
     setSeverity(opt.defaultSeverity);
   };
 
-  const handleSimulatePhoto = () => {
-    const svgData = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="220" viewBox="0 0 400 220">
-      <rect width="400" height="220" fill="#E0F2FE"/>
-      <rect x="40" y="140" width="320" height="40" fill="#0284C7" rx="8"/>
-      <text x="200" y="165" fill="#FFFFFF" font-family="sans-serif" font-size="15" font-weight="bold" text-anchor="middle">ภาพแนบจุดเสี่ยง (ยืนยันพิกัดเรียบร้อย)</text>
-      <text x="200" y="75" fill="#0F172A" font-family="sans-serif" font-size="14" text-anchor="middle">ถ่ายภาพจากสมาร์ทโฟนสำเร็จ</text>
-    </svg>`;
-    const encoded = `data:image/svg+xml;utf8,${encodeURIComponent(svgData)}`;
-    setImagePreview(encoded);
-    speakText('ถ่ายภาพแนบจุดเสี่ยงเรียบร้อยแล้ว');
+  const handleTriggerCamera = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setImagePreview(event.target.result as string);
+          speakText('ถ่ายภาพแนบจุดเสี่ยงเรียบร้อยแล้ว');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -275,20 +286,30 @@ export const ReportModal: React.FC<ReportModalProps> = ({
             </div>
           </div>
 
+          {/* Native Mobile Camera Input Element */}
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
+          />
+
           {/* Photo Snap Button */}
           <div className="form-group" style={{ marginBottom: '1rem' }}>
             {imagePreview ? (
-              <div style={{ marginBottom: '0.4rem' }}>
-                <img src={imagePreview} alt="รูปแนบ" style={{ width: '100%', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)' }} />
+              <div style={{ marginBottom: '0.5rem' }}>
+                <img src={imagePreview} alt="รูปถ่ายจุดเสี่ยง" style={{ width: '100%', maxHeight: '220px', objectFit: 'cover', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)' }} />
               </div>
             ) : null}
             <button
               type="button"
               className="btn-secondary"
-              style={{ width: '100%', fontWeight: 600 }}
-              onClick={handleSimulatePhoto}
+              style={{ width: '100%', fontWeight: 600, padding: '0.75rem' }}
+              onClick={handleTriggerCamera}
             >
-              {imagePreview ? 'ถ่ายภาพแนบใหม่' : 'กดเปิดกล้องถ่ายภาพสิ่งกีดขวาง (ถ้ามี)'}
+              {imagePreview ? 'ถ่ายภาพแนบใหม่' : 'กดเปิดกล้องถ่ายภาพสิ่งกีดขวาง'}
             </button>
           </div>
 
