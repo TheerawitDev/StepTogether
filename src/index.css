@@ -538,3 +538,65 @@ body {
     padding: 1.15rem;
   }
 }
+
+/* User Level Chip in Header */
+.user-level-chip {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+/* Custom Mystery Box Map Pin */
+.custom-mystery-box-pin {
+  background: none;
+  border: none;
+}
+
+.mystery-box-badge {
+  background-color: #FEF3C7;
+  border: 2px solid #F59E0B;
+  border-radius: 20px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  cursor: pointer;
+  animation: boxPulse 2s infinite ease-in-out;
+  white-space: nowrap;
+}
+
+.mystery-box-badge .box-emoji {
+  font-size: 1.1rem;
+}
+
+.mystery-box-badge .box-text {
+  font-family: var(--font-main);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #B45309;
+}
+
+@keyframes boxPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes boxBounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-12px);
+  }
+}

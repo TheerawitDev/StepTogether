@@ -1,19 +1,24 @@
 import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import { HazardReport, UserLocation } from '../types/hazard';
+import { MysteryBox } from '../types/gamification';
 import { speakText } from '../services/audioRadar';
 
 interface RadarMapProps {
   userLocation: UserLocation;
   hazards: HazardReport[];
+  mysteryBoxes?: MysteryBox[];
   onSelectHazard?: (hazard: HazardReport) => void;
+  onSelectMysteryBox?: (box: MysteryBox) => void;
   radarRadiusMeters?: number;
 }
 
 export const RadarMap: React.FC<RadarMapProps> = ({
   userLocation,
   hazards,
+  mysteryBoxes = [],
   onSelectHazard,
+  onSelectMysteryBox,
   radarRadiusMeters = 50
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -155,8 +160,35 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       marker.addTo(markersGroup);
     });
 
+    // 3. Draw Mystery Box Pins (Glowing Gift Boxes)
+    mysteryBoxes.forEach((box) => {
+      if (box.isOpened) return;
+
+      const boxBadgeHtml = `
+        <div class="mystery-box-badge">
+          <span class="box-emoji">🎁</span>
+          <span class="box-text">${box.name}</span>
+        </div>
+      `;
+
+      const boxIcon = L.divIcon({
+        html: boxBadgeHtml,
+        className: 'custom-mystery-box-pin',
+        iconSize: [140, 32],
+        iconAnchor: [70, 16]
+      });
+
+      const boxMarker = L.marker([box.lat, box.lng], { icon: boxIcon });
+      boxMarker.on('click', () => {
+        if (onSelectMysteryBox) {
+          onSelectMysteryBox(box);
+        }
+      });
+      boxMarker.addTo(markersGroup);
+    });
+
     map.panTo([userLocation.lat, userLocation.lng], { animate: true });
-  }, [userLocation, hazards, radarRadiusMeters, onSelectHazard]);
+  }, [userLocation, hazards, mysteryBoxes, radarRadiusMeters, onSelectHazard, onSelectMysteryBox]);
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1 }}>

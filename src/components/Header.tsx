@@ -3,14 +3,20 @@ import React from 'react';
 interface HeaderProps {
   onOpenMenu: () => void;
   gpsStatusText: string;
+  userLevel?: number;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenMenu, gpsStatusText }) => {
+export const Header: React.FC<HeaderProps> = ({ onOpenMenu, gpsStatusText, userLevel = 1 }) => {
   return (
     <header className="floating-header">
       <div className="floating-header-inner">
         <div className="header-info-col">
-          <h1 className="brand-title">StepTogether</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <h1 className="brand-title">StepTogether</h1>
+            <span className="user-level-chip">
+              Lv. {userLevel}
+            </span>
+          </div>
           <div className="gps-status-subtitle">
             เรดาร์นำทาง | พิกัด: <span className="gps-status-badge">{gpsStatusText}</span>
           </div>

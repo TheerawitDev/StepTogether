@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { AccessibilitySettings, HazardReport, UserLocation } from '../types/hazard';
+import { Badge, Quest, UserProfile } from '../types/gamification';
 import { AccessibilityBar } from './AccessibilityBar';
 import { HazardList } from './HazardList';
 import { SimulatedWalkControls } from './SimulatedWalkControls';
+import { QuestBadgePanel } from './QuestBadgePanel';
 
 interface SlideMenuProps {
   isOpen: boolean;
@@ -14,6 +16,10 @@ interface SlideMenuProps {
   setUserLocation: (loc: UserLocation) => void;
   onVerifyHazard: (id: string) => void;
   onSolveHazard: (id: string) => void;
+  userProfile: UserProfile;
+  quests: Quest[];
+  badges: Badge[];
+  onClaimQuest: (questId: string) => void;
 }
 
 export const SlideMenu: React.FC<SlideMenuProps> = ({
@@ -25,9 +31,13 @@ export const SlideMenu: React.FC<SlideMenuProps> = ({
   userLocation,
   setUserLocation,
   onVerifyHazard,
-  onSolveHazard
+  onSolveHazard,
+  userProfile,
+  quests,
+  badges,
+  onClaimQuest
 }) => {
-  const [activeTab, setActiveTab] = useState<'LIST' | 'ACCESSIBILITY' | 'SIMULATOR'>('LIST');
+  const [activeTab, setActiveTab] = useState<'LIST' | 'QUESTS' | 'ACCESSIBILITY' | 'SIMULATOR'>('LIST');
 
   if (!isOpen) return null;
 
@@ -73,25 +83,33 @@ export const SlideMenu: React.FC<SlideMenuProps> = ({
           <button
             className={`nav-btn ${activeTab === 'LIST' ? 'active' : ''}`}
             onClick={() => setActiveTab('LIST')}
-            style={{ flex: 1, padding: '0.5rem', fontSize: '0.88rem' }}
+            style={{ flex: 1, padding: '0.45rem', fontSize: '0.82rem' }}
           >
-            รายการจุดเสี่ยง ({activeCount})
+            จุดเสี่ยง ({activeCount})
+          </button>
+
+          <button
+            className={`nav-btn ${activeTab === 'QUESTS' ? 'active' : ''}`}
+            onClick={() => setActiveTab('QUESTS')}
+            style={{ flex: 1, padding: '0.45rem', fontSize: '0.82rem' }}
+          >
+            🎯 ภารกิจ & Lv
           </button>
 
           <button
             className={`nav-btn ${activeTab === 'ACCESSIBILITY' ? 'active' : ''}`}
             onClick={() => setActiveTab('ACCESSIBILITY')}
-            style={{ flex: 1, padding: '0.5rem', fontSize: '0.88rem' }}
+            style={{ flex: 1, padding: '0.45rem', fontSize: '0.82rem' }}
           >
-            โหมดช่วยเหลืออ่านเสียง
+            โหมดเสียงอ่าน
           </button>
 
           <button
             className={`nav-btn ${activeTab === 'SIMULATOR' ? 'active' : ''}`}
             onClick={() => setActiveTab('SIMULATOR')}
-            style={{ flex: 1, padding: '0.5rem', fontSize: '0.88rem' }}
+            style={{ flex: 1, padding: '0.45rem', fontSize: '0.82rem' }}
           >
-            ทดลองเดินเรดาร์
+            ทดลองเดิน
           </button>
         </div>
 
@@ -103,6 +121,15 @@ export const SlideMenu: React.FC<SlideMenuProps> = ({
               userLocation={userLocation}
               onVerifyHazard={onVerifyHazard}
               onSolveHazard={onSolveHazard}
+            />
+          )}
+
+          {activeTab === 'QUESTS' && (
+            <QuestBadgePanel
+              userProfile={userProfile}
+              quests={quests}
+              badges={badges}
+              onClaimQuest={onClaimQuest}
             />
           )}
 
