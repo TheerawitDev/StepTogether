@@ -83,9 +83,9 @@ body {
 /* Floating Top Header Bar */
 .floating-header {
   position: fixed;
-  top: 16px;
-  left: 16px;
-  right: 16px;
+  top: max(10px, env(safe-area-inset-top, 10px));
+  left: max(10px, env(safe-area-inset-left, 10px));
+  right: max(10px, env(safe-area-inset-right, 10px));
   z-index: 1000;
   pointer-events: none;
 }
@@ -93,29 +93,67 @@ body {
 .floating-header-inner {
   max-width: 900px;
   margin: 0 auto;
-  background-color: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: 0.75rem 1.25rem;
+  padding: 0.6rem 0.9rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.75rem;
   box-shadow: var(--shadow-md);
   pointer-events: auto;
 }
 
+.header-info-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .brand-title {
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-brand-primary);
-  letter-spacing: -0.5px;
+  letter-spacing: -0.4px;
+  line-height: 1.25;
+}
+
+.gps-status-subtitle {
+  font-size: 0.73rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.gps-status-badge {
+  color: var(--color-text-main);
+  font-weight: 700;
+}
+
+.header-btn-col {
+  flex-shrink: 0;
+}
+
+.header-menu-btn {
+  padding: 0.45rem 0.85rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
 }
 
 /* Floating Center-Bottom Report Action Button */
 .floating-report-container {
   position: fixed;
-  bottom: 24px;
+  bottom: max(20px, calc(14px + env(safe-area-inset-bottom, 0px)));
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
@@ -123,56 +161,83 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 8px;
+  width: calc(100% - 32px);
+  max-width: 420px;
 }
 
 .floating-report-btn {
+  width: 100%;
   background-color: var(--color-brand-primary);
   color: #FFFFFF;
   border: 3px solid #FFFFFF;
   border-radius: 30px;
-  padding: 1rem 2.2rem;
+  padding: 0.85rem 1.5rem;
   font-family: var(--font-main);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   cursor: pointer;
   box-shadow: var(--shadow-lg);
   transition: transform 0.15s ease, background-color 0.2s ease;
   white-space: nowrap;
+  text-align: center;
 }
 
 .floating-report-btn:hover {
   background-color: var(--color-brand-dark);
-  transform: scale(1.03);
+  transform: scale(1.02);
 }
 
 .floating-report-btn:active {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
 
-/* Proximity Banner Overlay */
+/* Proximity Banner Overlay (Notification) */
 .floating-banner-overlay {
   position: fixed;
-  top: 80px;
-  left: 16px;
-  right: 16px;
+  top: calc(max(10px, env(safe-area-inset-top, 10px)) + 64px);
+  left: max(10px, env(safe-area-inset-left, 10px));
+  right: max(10px, env(safe-area-inset-right, 10px));
   z-index: 1001;
   max-width: 600px;
   margin: 0 auto;
+  pointer-events: none;
+  animation: bannerSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes bannerSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .proximity-banner {
-  background-color: #FEF2F2;
+  background-color: rgba(254, 242, 242, 0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 2px solid #EF4444;
   border-radius: var(--radius-md);
-  padding: 0.85rem 1.15rem;
+  padding: 0.75rem 1rem;
   color: #991B1B;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto;
 }
 
 .proximity-banner-title {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   margin-bottom: 0.2rem;
+  line-height: 1.3;
+}
+
+/* Custom positioning for Leaflet zoom control */
+.leaflet-bottom.leaflet-right {
+  margin-bottom: max(80px, calc(70px + env(safe-area-inset-bottom, 0px))) !important;
+  margin-right: max(10px, env(safe-area-inset-right, 10px)) !important;
 }
 
 /* Toggle Buttons & Pills (No Icons) */
@@ -439,4 +504,37 @@ body {
   padding: 0.2rem 0.5rem;
   border-radius: var(--radius-sm);
   white-space: nowrap;
+}
+
+/* Mobile Screen Responsive Tweaks */
+@media (max-width: 480px) {
+  .brand-title {
+    font-size: 1.12rem;
+  }
+  .gps-status-subtitle {
+    font-size: 0.68rem;
+  }
+  .header-menu-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  .floating-header-inner {
+    padding: 0.5rem 0.75rem;
+  }
+  .proximity-banner {
+    padding: 0.65rem 0.85rem;
+  }
+  .proximity-banner-title {
+    font-size: 0.88rem;
+  }
+  .floating-report-btn {
+    padding: 0.78rem 1.2rem;
+    font-size: 0.98rem;
+  }
+  .modal-overlay {
+    padding: max(0.75rem, env(safe-area-inset-top, 0.75rem)) 0.75rem max(0.75rem, env(safe-area-inset-bottom, 0.75rem));
+  }
+  .modal-card {
+    padding: 1.15rem;
+  }
 }

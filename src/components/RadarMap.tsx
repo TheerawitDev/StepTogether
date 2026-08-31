@@ -37,8 +37,8 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         maxZoom: 19
       }).addTo(map);
 
-      // Add Zoom control at top right
-      L.control.zoom({ position: 'topright' }).addTo(map);
+      // Add Zoom control at bottom right (away from top header)
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
 
       const markersGroup = L.layerGroup().addTo(map);
       markersLayerRef.current = markersGroup;
